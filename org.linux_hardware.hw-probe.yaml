@@ -1,6 +1,6 @@
 app-id: org.linux_hardware.hw-probe
 runtime: org.kde.Platform
-runtime-version: "6.2"
+runtime-version: "6.3"
 sdk: org.kde.Sdk
 command: hw-probe
 finish-args:
@@ -9,7 +9,6 @@ finish-args:
   - --filesystem=host:ro
   - --filesystem=/var/log:ro
   - --filesystem=/sys:ro
-  - --filesystem=/dev
   - --socket=wayland
   - --socket=fallback-x11
   - --share=ipc
