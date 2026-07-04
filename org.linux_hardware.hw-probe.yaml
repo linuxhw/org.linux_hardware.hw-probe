@@ -150,19 +150,6 @@ modules:
       - type: archive
         url: https://cdn.kernel.org/pub/linux/utils/kernel/kmod/kmod-12.tar.xz
         sha256: c6189dd8c5a1e8d9224e8506bd188c0cd5dfa119fd6b7e5869b3640cbe8bf92f
-  - name: libusb-1
-    buildsystem: simple
-    build-commands:
-      - NOCONFIGURE=1 sh autogen.sh
-      - ./configure --disable-static --disable-udev --prefix=/
-      - sed -i -e 's/ -g / -s /' Makefile
-      - make -j $FLATPAK_BUILDER_N_JOBS
-      - find . -type f | perl -lne 'print if -B and -x' | xargs strip
-      - make install DESTDIR=$FLATPAK_DEST
-    sources:
-      - type: archive
-        url: https://github.com/libusb/libusb/archive/v1.0.22.tar.gz
-        sha256: 3500f7b182750cd9ccf9be8b1df998f83df56a39ab264976bdb3307773e16f48
   - name: usbutils
     buildsystem: simple
     build-commands:
