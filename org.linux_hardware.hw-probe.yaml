@@ -8,7 +8,6 @@ finish-args:
   - --device=all
   - --filesystem=host:ro
   - --filesystem=/var/log:ro
-  - --filesystem=/sys:ro
   - --socket=wayland
   - --socket=fallback-x11
   - --share=ipc
