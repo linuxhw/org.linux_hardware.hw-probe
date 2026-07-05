@@ -6,8 +6,6 @@ command: hw-probe
 finish-args:
   - --share=network
   - --device=all
-  - --filesystem=host:ro
-  - --filesystem=/var/log:ro
   - --socket=wayland
   - --socket=fallback-x11
   - --share=ipc
