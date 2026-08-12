@@ -159,14 +159,9 @@ modules:
         url: https://github.com/libusb/libusb/releases/download/v1.0.30/libusb-1.0.30.tar.bz2
         sha256: fea36f34f9156400209595e300840767ab1a385ede1dc7ee893015aea9c6dbaf
   - name: usbutils
-    buildsystem: simple
-    build-commands:
-      - ./configure --prefix=/ LIBUSB_CFLAGS='-I'$FLATPAK_DEST'/include/libusb-1.0' LIBUSB_LIBS='-L'$FLATPAK_DEST'/lib64 -L'$FLATPAK_DEST'/lib -lusb-1.0'
-      - sed -i -e 's/ -g / -s /' Makefile
-      - make -j $FLATPAK_BUILDER_N_JOBS
-      - find . -type f | perl -lne 'print if -B and -x' | xargs strip
-      - make install DESTDIR=$FLATPAK_DEST
-      - sed -i -e 's|/share/usb.ids|/var/tmp/P_USB|' $FLATPAK_DEST/bin/lsusb
+    buildsystem: meson
+    config-opts:
+      - -Dbuildtype=release
     sources:
       - type: archive
         url: https://mirrors.edge.kernel.org/pub/linux/utils/usb/usbutils/usbutils-019.tar.xz
