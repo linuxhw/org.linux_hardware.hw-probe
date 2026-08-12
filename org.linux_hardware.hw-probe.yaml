@@ -147,6 +147,17 @@ modules:
       - type: archive
         url: https://cdn.kernel.org/pub/linux/utils/kernel/kmod/kmod-12.tar.xz
         sha256: c6189dd8c5a1e8d9224e8506bd188c0cd5dfa119fd6b7e5869b3640cbe8bf92f
+  - name: libusb
+    buildsystem: simple
+    build-commands:
+      - ./configure --prefix=/
+      - make -j $FLATPAK_BUILDER_N_JOBS
+      - find . -type f | perl -lne 'print if -B and -x' | xargs strip
+      - make install DESTDIR=$FLATPAK_DEST
+    sources:
+      - type: archive
+        url: https://github.com/libusb/libusb/releases/download/v1.0.30/libusb-1.0.30.tar.bz2
+        sha256: fea36f34f9156400209595e300840767ab1a385ede1dc7ee893015aea9c6dbaf
   - name: usbutils
     buildsystem: simple
     build-commands:
@@ -159,8 +170,8 @@ modules:
       - sed -i -e 's|/share/usb.ids|/var/tmp/P_USB|' $FLATPAK_DEST/bin/lsusb
     sources:
       - type: archive
-        url: https://mirrors.edge.kernel.org/pub/linux/utils/usb/usbutils/usbutils-007.tar.xz
-        sha256: 7593a01724bbc0fd9fe48e62bc721ceb61c76654f1d7b231b3c65f6dfbbaefa4
+        url: https://mirrors.edge.kernel.org/pub/linux/utils/usb/usbutils/usbutils-019.tar.xz
+        sha256: 659f40c440e31ba865c52c818a33d3ba6a97349e3353f8b1985179cb2aa71ec5
   - name: pciutils
     buildsystem: simple
     build-commands:
