@@ -162,6 +162,8 @@ modules:
     buildsystem: meson
     config-opts:
       - -Dbuildtype=release
+      - -Dc_args="-I'$FLATPAK_DEST'/include/libusb-1.0"
+      - -Dc_link_args="-L'$FLATPAK_DEST'/lib64 -L'$FLATPAK_DEST'/lib -lusb-1.0"
     sources:
       - type: archive
         url: https://mirrors.edge.kernel.org/pub/linux/utils/usb/usbutils/usbutils-019.tar.xz
