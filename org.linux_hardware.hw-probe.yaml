@@ -181,6 +181,7 @@ modules:
     buildsystem: simple
     build-commands:
       - sed -i -e 's/ acpiexamples acpiexec acpihelp acpisrc / /g' generate/unix/Makefile.config
+      - sed -i -e 's/-D_FORTIFY_SOURCE=2//g' generate/unix/Makefile.config
       - make -j $FLATPAK_BUILDER_N_JOBS
       - make install DESTDIR=$FLATPAK_DEST PREFIX=/
     sources:
@@ -260,8 +261,8 @@ modules:
       - cp -fr ./INST/SITELIB/* $FLATPAK_DEST/share/perl5/
     sources:
       - type: archive
-        url: https://cpan.metacpan.org/authors/id/E/ET/ETHER/URI-5.08.tar.gz
-        sha256: 7e2c6fe3b1d5947da334fa558a96e748aaa619213b85bcdce5b5347d4d26c46e
+        url: https://www.cpan.org/modules/by-module/URI/URI-5.34.tar.gz
+        sha256: de64c779a212ff1821896c5ca2bb69e74767d2674cee411e777deea7a22604a8
   - name: perl-http-message
     buildsystem: simple
     build-commands:
@@ -271,8 +272,8 @@ modules:
       - cp -fr ./INST/SITELIB/* $FLATPAK_DEST/share/perl5/
     sources:
       - type: archive
-        url: https://cpan.metacpan.org/authors/id/O/OA/OALDERS/HTTP-Message-6.37.tar.gz
-        sha256: 0e59da0a85e248831327ebfba66796314cb69f1bfeeff7a9da44ad766d07d802
+        url: https://www.cpan.org/modules/by-module/HTTP/HTTP-Message-7.01.tar.gz
+        sha256: 82b79ce680251045c244ee059626fecbf98270bed1467f0175ff5ea91071437e
   - name: perl-net-http
     buildsystem: simple
     build-commands:
@@ -282,8 +283,8 @@ modules:
       - cp -fr ./INST/SITELIB/* $FLATPAK_DEST/share/perl5/
     sources:
       - type: archive
-        url: https://cpan.metacpan.org/authors/id/O/OA/OALDERS/Net-HTTP-6.22.tar.gz
-        sha256: 62faf9a5b84235443fe18f780e69cecf057dea3de271d7d8a0ba72724458a1a2
+        url: https://www.cpan.org/modules/by-module/Net/Net-HTTP-6.24.tar.gz
+        sha256: 290ed9a97b05c7935b048e6d2a356035871fca98ad72c01c5961726adf85c83c
   - name: perl-try-tiny
     buildsystem: simple
     build-commands:
@@ -304,8 +305,8 @@ modules:
       - cp -fr ./INST/SITELIB/* $FLATPAK_DEST/share/perl5/
     sources:
       - type: archive
-        url: https://cpan.metacpan.org/authors/id/G/GA/GAAS/LWP-MediaTypes-6.02.tar.gz
-        sha256: 18790b0cc5f0a51468495c3847b16738f785a2d460403595001e0b932e5db676
+        url: https://www.cpan.org/modules/by-module/LWP/LWP-MediaTypes-6.04.tar.gz
+        sha256: 8f1bca12dab16a1c2a7c03a49c5e58cce41a6fec9519f0aadfba8dad997919d9
   - name: perl-http-date
     buildsystem: simple
     build-commands:
@@ -315,8 +316,8 @@ modules:
       - cp -fr ./INST/SITELIB/* $FLATPAK_DEST/share/perl5/
     sources:
       - type: archive
-        url: https://cpan.metacpan.org/authors/id/G/GA/GAAS/HTTP-Date-6.02.tar.gz
-        sha256: e8b9941da0f9f0c9c01068401a5e81341f0e3707d1c754f8e11f42a7e629e333
+        url: https://www.cpan.org/modules/by-module/HTTP/HTTP-Date-6.06.tar.gz
+        sha256: 7b685191c6acc3e773d1fc02c95ee1f9fae94f77783175f5e78c181cc92d2b52
   - name: perl-timedate
     buildsystem: simple
     build-commands:
@@ -326,8 +327,8 @@ modules:
       - cp -fr ./INST/SITELIB/* $FLATPAK_DEST/share/perl5/
     sources:
       - type: archive
-        url: https://cpan.metacpan.org/authors/id/G/GB/GBARR/TimeDate-2.30.tar.gz
-        sha256: 75bd254871cb5853a6aa0403ac0be270cdd75c9d1b6639f18ecba63c15298e86
+        url: https://www.cpan.org/modules/by-module/Time/TimeDate-2.33.tar.gz
+        sha256: c0b69c4b039de6f501b0d9f13ec58c86b040c1f7e9b27ef249651c143d605eb2
   - name: libwww-perl
     buildsystem: simple
     build-commands:
@@ -359,8 +360,8 @@ modules:
       - cp -fr ./INST/SITELIB/* $FLATPAK_DEST/share/perl5/
     sources:
       - type: archive
-        url: https://cpan.metacpan.org/authors/id/D/DR/DROLSKY/Time-Local-1.30.tar.gz
-        sha256: c7744f6b2986b946d3e2cf034df371bee16cdbafe53e945abb1a542c4f8920cb
+        url: https://www.cpan.org/modules/by-module/Time/Time-Local-1.35.tar.gz
+        sha256: 1d136b71bd041cbe6f66c43180ee79e675b72ad5a3596abd6a44d211072ada29
   - name: perl-data-dumper
     buildsystem: simple
     build-commands:
@@ -372,82 +373,100 @@ modules:
       - cp -fr ./INST/usr/lib/perl5/*/* $FLATPAK_DEST/share/perl5/
     sources:
       - type: archive
-        url: https://cpan.metacpan.org/authors/id/S/SM/SMUELLER/Data-Dumper-2.161.tar.gz
-        sha256: 3aa4ac1b042b3880438165fb2b2139d377564a8e9928ffe689ede5304ee90558
+        url: https://www.cpan.org/modules/by-module/Data/Data-Dumper-2.183.tar.gz
+        sha256: e42736890b7dae1b37818d9c5efa1f1fdc52dec04f446a33a4819bf1d4ab5ad3
+  - name: python3-setuptools
+    buildsystem: simple
+    build-commands:
+        - pip3 install --no-deps .
+    sources:
+        - type: archive
+          url: https://files.pythonhosted.org/packages/6d/44/f5da03a8ef95d369145c5bb53050e7877c9f3d312e128605fd9504829143/setuptools-84.0.0.tar.gz
+          sha256: f4695c21257f0d9b537ec2692c941d02ee143b7cc1276941349a546573b2ef73
+  - name: python3-flit_core
+    buildsystem: simple
+    build-commands:
+        - pip3 install --no-deps --prefix=$FLATPAK_DEST .
+    sources:
+        - type: archive
+          url: https://files.pythonhosted.org/packages/46/ef/34533186e76c526d9ec17a1ad9a10c7354cbfb20f51583cc36dfe4bdccd0/flit_core-4.0.2.tar.gz
+          sha256: b6929defd93884b584d7c87829e0e7b5c26ed6be17b0b873979019314aa841c8
   - name: PyQt6
     buildsystem: simple
     build-commands:
-      - sip-install
-        --confirm-license
-        --no-designer-plugin
-        --no-qml-plugin
-        --no-tools
-        --concatenate=1
-        --no-docstrings
-        --verbose
-        --qt-shared
-        --target-dir=/app/lib/python3.9/site-packages/
-        --enable=QtCore
-        --enable=QtGui
-        --enable=QtWidgets
+      - |
+        PYTHON_VERSION=$(python3 -c 'import sys; print("{}.{}".format(*sys.version_info))')
+        sip-install \
+            --confirm-license \
+            --no-designer-plugin \
+            --no-qml-plugin \
+            --no-tools \
+            --concatenate=1 \
+            --no-docstrings \
+            --verbose \
+            --qt-shared \
+            --target-dir="${FLATPAK_DEST}/lib/python${PYTHON_VERSION}/site-packages" \
+            --enable=QtCore \
+            --enable=QtGui \
+            --enable=QtWidgets
     sources:
       - type: archive
-        url: https://github.com/linuxhw/build-stuff/releases/download/1.6/PyQt6-6.2.3.tar.gz
-        sha256: a9bfcac198fe4b703706f809bb686c7cef5f60a7c802fc145c6b57929c7a6a34
+        url: https://files.pythonhosted.org/packages/8b/47/b25c13eca5bebc6505394d0223e46d7ebf0c57dcac2ed908d7d19b18ab6b/pyqt6-6.11.0.tar.gz
+        sha256: 45dd60aa69976de1918b5ced6b4e7b6a25abd2a919ecef5fd5826ecc76718889
     modules:
       - name: python3-sip
         buildsystem: simple
         build-commands:
-          - pip3 install --no-deps --no-use-pep517 --prefix=$FLATPAK_DEST .
+          - pip3 install --no-deps --prefix=$FLATPAK_DEST --no-build-isolation .
         sources:
           - type: archive
-            url: https://github.com/linuxhw/build-stuff/releases/download/1.6/sip-6.5.1.tar.gz
-            sha256: 204f0240db8999a749d638a987b351861843e69239b811ec3d1881412c3706a6
+            url: https://files.pythonhosted.org/packages/35/cb/4b1c18c22e291bb08dfc028bd1577dc7e8818e83a0338557a4de1f203d65/sip-6.16.0.tar.gz
+            sha256: 22dcb9d02347a3af22a2cba41730c9467f1f781362e97c5eea4ec75c4b7e4ffe
         modules:
-          - name: python-toml
+          - name: python3-toml
             buildsystem: simple
             build-commands:
-                - pip3 install --no-deps --no-use-pep517 --prefix=$FLATPAK_DEST .
+                - pip3 install --no-deps --prefix=$FLATPAK_DEST --no-build-isolation .
             sources:
                 - type: archive
-                  url: https://files.pythonhosted.org/packages/source/t/toml/toml-0.10.0.tar.gz
-                  sha256: 229f81c57791a41d65e399fc06bf0848bab550a9dfd5ed66df18ce5f05e73d5c
-          - name: python-packaging
+                  url: https://files.pythonhosted.org/packages/be/ba/1f744cdc819428fc6b5084ec34d9b30660f6f9daaf70eead706e3203ec3c/toml-0.10.2.tar.gz
+                  sha256: b3bda1d108d5dd99f4a20d24d9c348e91c4db7ab1b749200bded2f839ccbe68f
+          - name: python3-packaging
             buildsystem: simple
             build-commands:
-                - pip3 install --no-deps --no-use-pep517 --prefix=$FLATPAK_DEST .
+                - pip3 install --no-deps --no-build-isolation .
             sources:
                 - type: archive
-                  url: https://files.pythonhosted.org/packages/source/p/packaging/packaging-20.1.tar.gz
-                  sha256: e665345f9eef0c621aa0bf2f8d78cf6d21904eef16a93f020240b704a57f1334
+                  url: https://files.pythonhosted.org/packages/7d/fa/3944b40b07da9ce895c0e6303a5ab7d53da063554f534556b134a54d6093/packaging-26.3.tar.gz
+                  sha256: 94edc256424af38762eb31306eed28beb9f0efc50a8837492c9d6fd6004aed79
             cleanup:
                 - "*"
-      - name: PyQt6_sip
+      - name: pyqt6_sip
         buildsystem: simple
         build-commands:
-          - pip3 install --no-deps --no-use-pep517 --prefix=$FLATPAK_DEST .
+          - pip3 install --no-deps --prefix=$FLATPAK_DEST --no-build-isolation .
         sources:
           - type: archive
-            url: https://github.com/linuxhw/build-stuff/releases/download/1.6/PyQt6_sip-13.2.1.tar.gz
-            sha256: b7bce59900b2e0a04f70246de2ccf79ee7933036b6b9183cf039b62eeae2b858
-      - name: python-pyparsing
+            url: https://files.pythonhosted.org/packages/d1/23/16c583dbb6b53e0494dfcf7d1a44778c82e324edda62326727b37f1a5b34/pyqt6_sip-13.12.0.tar.gz
+            sha256: a7ad45c1e3cec3a2473d37ea9870b6c3baeccc560298623c8eb59265714c06e2
+      - name: python3-pyparsing
         buildsystem: simple
         build-commands:
-          - pip3 install --no-deps --no-use-pep517 --prefix=$FLATPAK_DEST .
+          - pip3 install --no-deps --prefix=$FLATPAK_DEST --no-build-isolation .
         sources:
           - type: archive
-            url: https://files.pythonhosted.org/packages/source/p/pyparsing/pyparsing-2.4.6.tar.gz
-            sha256: 4c830582a84fb022400b85429791bc551f1f4871c33f23e44f353119e92f969f
+            url: https://files.pythonhosted.org/packages/f3/91/9c6ee907786a473bf81c5f53cf703ba0957b23ab84c264080fb5a450416f/pyparsing-3.3.2.tar.gz
+            sha256: c777f4d763f140633dcb6d8a3eda953bf7a214dc4eff598413c070bcdc117cbc
         cleanup:
           - "*"
-      - name: PyQt-builder
+      - name: pyqt_builder
         buildsystem: simple
         build-commands:
-          - pip3 install --no-deps --no-use-pep517 --prefix=$FLATPAK_DEST .
+          - pip3 install --no-deps --prefix=$FLATPAK_DEST --no-build-isolation .
         sources:
           - type: archive
-            url: https://files.pythonhosted.org/packages/8b/5f/1bd49787262ddce37b826ef49dcccf5a9970facf0ed363dee5ee233e681d/PyQt-builder-1.12.2.tar.gz
-            sha256: f62bb688d70e0afd88c413a8d994bda824e6cebd12b612902d1945c5a67edcd7
+            url: https://files.pythonhosted.org/packages/61/f6/f3b504b4d55a7c4d3393cb90378501f1f5fc7f233bd85c0375674f84d2af/pyqt_builder-1.19.1.tar.gz
+            sha256: 6af6646ba29668751b039bfdced51642cb510e300796b58a4d68b7f956a024d8
         cleanup:
         - "*"
   - name: hwinfo
@@ -521,5 +540,5 @@ modules:
       - cd lib && cat $FLATPAK_DEST/share/PERL5_BASE | while read i; do mkdir -p $FLATPAK_DEST/share/perl5/`dirname $i`; cp -fr $i $FLATPAK_DEST/share/perl5/$i; done
     sources:
       - type: archive
-        url: https://www.cpan.org/src/5.0/perl-5.36.0.tar.xz
-        sha256: 0f386dccbee8e26286404b2cca144e1005be65477979beb9b1ba272d4819bcf0
+        url: https://www.cpan.org/src/5.0/perl-5.45.1.tar.xz
+        sha256: f15cd7b9cd5436b014d32289cff927777035951072f7f1c83b0a1385b59fb807
