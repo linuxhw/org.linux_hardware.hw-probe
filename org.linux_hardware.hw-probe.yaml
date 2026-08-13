@@ -172,7 +172,6 @@ modules:
     buildsystem: simple
     build-commands:
       - make install PREFIX=/ DESTDIR=$FLATPAK_DEST SHARED=no LIBKMOD=no HWDB=no ZLIB=no DNS=no
-      - sed -i -e 's|/share/pci.ids|/var/tmp/P_PCI|' $FLATPAK_DEST/sbin/lspci
     sources:
       - type: archive
         url: https://github.com/pciutils/pciutils/archive/v3.6.2.tar.gz
@@ -518,7 +517,16 @@ modules:
     sources:
       - type: archive
         url: https://github.com/linuxhw/build-stuff/releases/download/1.6/hw-probe-1.6-AI.tar.gz
-        sha256: 4855a49a42c0ebe4cdadd8fd2217137d6f3643a662ad3b7c1f34a5c1b61859d2
+        sha256: 3d5d98baa2d6019fe414c86aae1c5c13db0872f0ba72d27054fad06fcb2e0b7a
+  - name: hwdata
+    buildsystem: autotools
+    config-opts:
+      - --prefix=$FLATPAK_DEST
+      - --disable-blacklist
+    sources:
+      - type: archive
+        url: https://github.com/vcrhonek/hwdata/archive/refs/tags/v0.410.tar.gz
+        sha256: 2864b061b179b8ad8cb6a7339ca07678240a183d9cedce8677a4950acaf798e0
   - name: hw-probe-pyqt6-gui
     buildsystem: simple
     build-commands:
