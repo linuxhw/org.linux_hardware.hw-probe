@@ -180,12 +180,13 @@ modules:
   - name: acpica-unix
     buildsystem: simple
     build-commands:
+      - sed -i -e 's/ acpiexamples acpiexec acpihelp acpisrc / /g' generate/unix/Makefile.config
       - make -j $FLATPAK_BUILDER_N_JOBS
       - make install DESTDIR=$FLATPAK_DEST PREFIX=/
     sources:
       - type: archive
-        url: https://github.com/user-attachments/files/19613932/acpica-unix-20250404.tar.gz
-        sha256: c0895489e6cb2dc92e49dc60cdf94ac02b0d33602166354267b8f4b6586c2315
+        url: https://github.com/acpica/acpica/releases/download/20260408/acpica-unix-20260408.tar.gz
+        sha256: e66ceb26d6d514ce164fe22f5a4f7ca165cc38349d7a97f41a21f19b364647a2
   - name: hdparm
     buildsystem: simple
     build-commands:
