@@ -227,20 +227,6 @@ modules:
       - type: archive
         url: https://mirrors.edge.kernel.org/pub/linux/utils/util-linux/v2.39/util-linux-2.39.1.tar.xz
         sha256: 890ae8ff810247bd19e274df76e8371d202cda01ad277681b0ea88eeaa00286b
-  - name: libx86emu
-    buildsystem: simple
-    build-commands:
-      - echo '3.7' > VERSION
-      - rm -f git2log
-      - sed -i -e 's/ -g / -s /' Makefile
-      - make -j $FLATPAK_BUILDER_N_JOBS
-      - find . -type f | perl -lne 'print if -B and -x' | xargs strip
-      - make install DESTDIR=`pwd`/INST
-      - cp -fr INST/usr/* $FLATPAK_DEST/
-    sources:
-      - type: archive
-        url: https://github.com/wfeldt/libx86emu/archive/refs/tags/3.7.tar.gz
-        sha256: 03754aede79530baa0e862e1aad5527e9c1bd3371736b1ab5a2bc769e4a3d680
   - name: lex
     buildsystem: simple
     build-commands:
@@ -469,6 +455,20 @@ modules:
             sha256: 6af6646ba29668751b039bfdced51642cb510e300796b58a4d68b7f956a024d8
         cleanup:
         - "*"
+  - name: libx86emu
+    buildsystem: simple
+    build-commands:
+      - echo '3.7' > VERSION
+      - rm -f git2log
+      - sed -i -e 's/ -g / -s /' Makefile
+      - make -j $FLATPAK_BUILDER_N_JOBS
+      - find . -type f | perl -lne 'print if -B and -x' | xargs strip
+      - make install DESTDIR=`pwd`/INST
+      - cp -fr INST/usr/* $FLATPAK_DEST/
+    sources:
+      - type: archive
+        url: https://github.com/wfeldt/libx86emu/archive/refs/tags/3.7.tar.gz
+        sha256: 03754aede79530baa0e862e1aad5527e9c1bd3371736b1ab5a2bc769e4a3d680
   - name: hwinfo
     skip-arches:
       - aarch64
@@ -540,5 +540,5 @@ modules:
       - cd lib && cat $FLATPAK_DEST/share/PERL5_BASE | while read i; do mkdir -p $FLATPAK_DEST/share/perl5/`dirname $i`; cp -fr $i $FLATPAK_DEST/share/perl5/$i; done
     sources:
       - type: archive
-        url: https://www.cpan.org/src/5.0/perl-5.43.11.tar.xz
-        sha256: e1f58988e66700e25bc55ca1aa586416b80f971cd75a6ecaa442be55d18b5835
+        url: https://www.cpan.org/src/5.0/perl-5.42.3.tar.xz
+        sha256: c9387e1473a1866935cb047ece7c2e0a80767a3acdecb79d4a375f8a95970ddc
