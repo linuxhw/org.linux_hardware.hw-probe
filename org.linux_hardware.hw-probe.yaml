@@ -406,7 +406,7 @@ modules:
     sources:
       - type: archive
         url: https://github.com/linuxhw/build-stuff/releases/download/1.6/hw-probe-1.6-AI.tar.gz
-        sha256: c13151da522d594b9ed53805c665a96c62678e132b6ffa37c7da264090c9d10f
+        sha256: 8bb16f1a788c9cfceb5bf2b75637607025ac206ac0765f3bfddd17ebe9892592
   - name: hwdata
     buildsystem: autotools
     config-opts:
