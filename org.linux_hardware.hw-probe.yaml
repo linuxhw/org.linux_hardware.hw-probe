@@ -95,6 +95,8 @@ modules:
     build-commands:
       - perl Makefile.PL
       - make install DESTDIR=`pwd`/INST INSTALLSITELIB=/SITELIB
+      - chmod 777 -R ./INST
+      - find ./INST -type f | perl -lne 'print if -B and -x' | xargs strip
       - mkdir -p $FLATPAK_DEST/share/perl5/
       - cp -fr ./INST/usr/lib/perl5/*/* $FLATPAK_DEST/share/perl5/
     sources:
