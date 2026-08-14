@@ -96,7 +96,7 @@ modules:
       - perl Makefile.PL
       - make install DESTDIR=`pwd`/INST INSTALLSITELIB=/SITELIB
       - mkdir -p $FLATPAK_DEST/share/perl5/
-      - cp -fr ./INST/SITELIB/* $FLATPAK_DEST/share/perl5/
+      - cp -fr ./INST/usr/lib/perl5/*/* $FLATPAK_DEST/share/perl5/
     sources:
       - type: archive
         url: https://cpan.metacpan.org/authors/id/A/AT/ATOOMIC/Clone-0.50.tar.gz
