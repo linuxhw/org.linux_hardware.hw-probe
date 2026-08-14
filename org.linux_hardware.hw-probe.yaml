@@ -11,7 +11,7 @@ finish-args:
   - --share=ipc
   - --env=PATH=/usr/bin:/bin:/usr/sbin:/sbin:/app/bin:/app/sbin
   - --env=PERL5LIB=/app/share/perl5:/app/lib/x86_64-linux-gnu/perl-base:/app/lib/i386-linux-gnu/perl-base
-  - --env=LD_LIBRARY_PATH=/app/lib/x86_64-linux-gnu/:/app/lib/i386-linux-gnu/:/app/lib64:/app/lib
+  - --env=LD_LIBRARY_PATH=/app/lib/x86_64-linux-gnu/:/app/lib/i386-linux-gnu/:/app/lib
   - --env=LC_ALL=C
 cleanup:
   - /include
@@ -44,7 +44,6 @@ cleanup:
   - /sbin/vpddecode
   - /sbin/smartd
   - /sbin/update-smart-drivedb
-  - /lib64/pkgconfig
   - /lib/pkgconfig
   - /lib/libltdl*
   - /bin/acpibin
@@ -91,6 +90,19 @@ modules:
       - type: archive
         url: https://ftp.gnu.org/gnu/libtool/libtool-2.4.6.tar.xz
         sha256: 7c87a8c2c8c0fc9cd5019e402bed4292462d00a718a7cd5f11218153bf28b26f
+  - name: perl-clone
+    buildsystem: simple
+    build-commands:
+      - perl Makefile.PL
+      - make install DESTDIR=`pwd`/INST INSTALLSITELIB=/SITELIB
+      - chmod 777 -R ./INST
+      - find ./INST -type f | perl -lne 'print if -B and -x' | xargs strip
+      - mkdir -p $FLATPAK_DEST/share/perl5/
+      - cp -fr ./INST/usr/lib/perl5/*/* $FLATPAK_DEST/share/perl5/
+    sources:
+      - type: archive
+        url: https://cpan.metacpan.org/authors/id/A/AT/ATOOMIC/Clone-0.50.tar.gz
+        sha256: f9732a4a857974db30905233589113003301b585b0cecda29a21cfba5bb014f9
   - name: edid-decode
     buildsystem: simple
     build-commands:
@@ -237,6 +249,184 @@ modules:
       - type: archive
         url: https://github.com/linuxhw/build-stuff/releases/download/1.4/flex-20181004.tar.gz
         sha256: bd7d248de7792dd2de2089a16b7ea60f94b2056e721e1f0f1b28083f4792e902
+  - name: python3-setuptools
+    buildsystem: simple
+    build-commands:
+        - pip3 install --no-deps .
+    sources:
+        - type: archive
+          url: https://files.pythonhosted.org/packages/6d/44/f5da03a8ef95d369145c5bb53050e7877c9f3d312e128605fd9504829143/setuptools-84.0.0.tar.gz
+          sha256: f4695c21257f0d9b537ec2692c941d02ee143b7cc1276941349a546573b2ef73
+  - name: python3-flit_core
+    buildsystem: simple
+    build-commands:
+        - pip3 install --no-deps --prefix=$FLATPAK_DEST .
+    sources:
+        - type: archive
+          url: https://files.pythonhosted.org/packages/46/ef/34533186e76c526d9ec17a1ad9a10c7354cbfb20f51583cc36dfe4bdccd0/flit_core-4.0.2.tar.gz
+          sha256: b6929defd93884b584d7c87829e0e7b5c26ed6be17b0b873979019314aa841c8
+  - name: PyQt6
+    buildsystem: simple
+    build-commands:
+      - |
+        PYTHON_VERSION=$(python3 -c 'import sys; print("{}.{}".format(*sys.version_info))')
+        sip-install \
+            --confirm-license \
+            --no-designer-plugin \
+            --no-qml-plugin \
+            --no-tools \
+            --concatenate=1 \
+            --no-docstrings \
+            --verbose \
+            --qt-shared \
+            --target-dir="${FLATPAK_DEST}/lib/python${PYTHON_VERSION}/site-packages" \
+            --enable=QtCore \
+            --enable=QtGui \
+            --enable=QtWidgets
+    sources:
+      - type: archive
+        url: https://files.pythonhosted.org/packages/8b/47/b25c13eca5bebc6505394d0223e46d7ebf0c57dcac2ed908d7d19b18ab6b/pyqt6-6.11.0.tar.gz
+        sha256: 45dd60aa69976de1918b5ced6b4e7b6a25abd2a919ecef5fd5826ecc76718889
+    modules:
+      - name: python3-sip
+        buildsystem: simple
+        build-commands:
+          - pip3 install --no-deps --prefix=$FLATPAK_DEST --no-build-isolation .
+        sources:
+          - type: archive
+            url: https://files.pythonhosted.org/packages/35/cb/4b1c18c22e291bb08dfc028bd1577dc7e8818e83a0338557a4de1f203d65/sip-6.16.0.tar.gz
+            sha256: 22dcb9d02347a3af22a2cba41730c9467f1f781362e97c5eea4ec75c4b7e4ffe
+        modules:
+          - name: python3-toml
+            buildsystem: simple
+            build-commands:
+                - pip3 install --no-deps --prefix=$FLATPAK_DEST --no-build-isolation .
+            sources:
+                - type: archive
+                  url: https://files.pythonhosted.org/packages/be/ba/1f744cdc819428fc6b5084ec34d9b30660f6f9daaf70eead706e3203ec3c/toml-0.10.2.tar.gz
+                  sha256: b3bda1d108d5dd99f4a20d24d9c348e91c4db7ab1b749200bded2f839ccbe68f
+          - name: python3-packaging
+            buildsystem: simple
+            build-commands:
+                - pip3 install --no-deps --no-build-isolation .
+            sources:
+                - type: archive
+                  url: https://files.pythonhosted.org/packages/7d/fa/3944b40b07da9ce895c0e6303a5ab7d53da063554f534556b134a54d6093/packaging-26.3.tar.gz
+                  sha256: 94edc256424af38762eb31306eed28beb9f0efc50a8837492c9d6fd6004aed79
+            cleanup:
+                - "*"
+      - name: pyqt6_sip
+        buildsystem: simple
+        build-commands:
+          - pip3 install --no-deps --prefix=$FLATPAK_DEST --no-build-isolation .
+        sources:
+          - type: archive
+            url: https://files.pythonhosted.org/packages/d1/23/16c583dbb6b53e0494dfcf7d1a44778c82e324edda62326727b37f1a5b34/pyqt6_sip-13.12.0.tar.gz
+            sha256: a7ad45c1e3cec3a2473d37ea9870b6c3baeccc560298623c8eb59265714c06e2
+      - name: python3-pyparsing
+        buildsystem: simple
+        build-commands:
+          - pip3 install --no-deps --prefix=$FLATPAK_DEST --no-build-isolation .
+        sources:
+          - type: archive
+            url: https://files.pythonhosted.org/packages/f3/91/9c6ee907786a473bf81c5f53cf703ba0957b23ab84c264080fb5a450416f/pyparsing-3.3.2.tar.gz
+            sha256: c777f4d763f140633dcb6d8a3eda953bf7a214dc4eff598413c070bcdc117cbc
+        cleanup:
+          - "*"
+      - name: pyqt_builder
+        buildsystem: simple
+        build-commands:
+          - pip3 install --no-deps --prefix=$FLATPAK_DEST --no-build-isolation .
+        sources:
+          - type: archive
+            url: https://files.pythonhosted.org/packages/61/f6/f3b504b4d55a7c4d3393cb90378501f1f5fc7f233bd85c0375674f84d2af/pyqt_builder-1.19.1.tar.gz
+            sha256: 6af6646ba29668751b039bfdced51642cb510e300796b58a4d68b7f956a024d8
+        cleanup:
+        - "*"
+  - name: libx86emu
+    buildsystem: simple
+    build-commands:
+      - echo '3.7' > VERSION
+      - rm -f git2log
+      - sed -i -e 's/ -g / -s /' Makefile
+      - make -j $FLATPAK_BUILDER_N_JOBS
+      - find . -type f | perl -lne 'print if -B and -x' | xargs strip
+      - make install DESTDIR=`pwd`/INST LIBDIR=/usr/lib
+      - cp -fr INST/usr/* $FLATPAK_DEST/
+    sources:
+      - type: archive
+        url: https://github.com/wfeldt/libx86emu/archive/refs/tags/3.7.tar.gz
+        sha256: 03754aede79530baa0e862e1aad5527e9c1bd3371736b1ab5a2bc769e4a3d680
+  - name: hwinfo
+    skip-arches:
+      - aarch64
+      - arm
+    buildsystem: simple
+    build-commands:
+      - echo '23.2' > VERSION
+      - rm -f git2log
+      - sed -i -e 's/ -g / -s /' Makefile.common
+      - CFLAGS='-I'$FLATPAK_DEST'/include' LDFLAGS='-L'$FLATPAK_DEST'/lib -L'$FLATPAK_DEST'/lib -lx86emu' LD_LIBRARY_PATH=$FLATPAK_DEST'/lib:'$FLATPAK_DEST'/lib' make
+      - make install DESTDIR=`pwd`/INST
+      - cp -fr INST/usr/* $FLATPAK_DEST/
+    sources:
+      - type: archive
+        url: https://github.com/openSUSE/hwinfo/archive/23.2.tar.gz
+        sha256: 1ffc00d07aa1ad766e861d0d8492e2d2fa52cf537807f34e1c80e8c2d56c7115
+  - name: hwinfo
+    only-arches:
+      - aarch64
+      - arm
+    buildsystem: simple
+    build-commands:
+      - echo '22.1' > VERSION
+      - rm -f git2log
+      - sed -i -e 's/ -g / -s /' Makefile.common
+      - make
+      - make install DESTDIR=`pwd`/INST
+      - cp -fr INST/usr/* $FLATPAK_DEST/
+    sources:
+      - type: archive
+        url: https://github.com/openSUSE/hwinfo/archive/23.2.tar.gz
+        sha256: 1ffc00d07aa1ad766e861d0d8492e2d2fa52cf537807f34e1c80e8c2d56c7115
+  - name: hw-probe
+    buildsystem: simple
+    build-commands:
+      - make install DESTDIR=$FLATPAK_DEST prefix=/
+      - mv $FLATPAK_DEST/bin/hw-probe $FLATPAK_DEST/bin/hw-probe-flatpak
+      - install -m 777 -D flatpak/hw-probe.sh $FLATPAK_DEST/bin/hw-probe
+      - install -D flatpak/PERL5_BASE $FLATPAK_DEST/share/PERL5_BASE
+      - install -D flatpak/hw-probe.appdata.xml $FLATPAK_DEST/share/metainfo/org.linux_hardware.hw-probe.metainfo.xml
+      - install -D flatpak/icon-256x256.png $FLATPAK_DEST/share/icons/hicolor/256x256/apps/org.linux_hardware.hw-probe.png
+      - install -D flatpak/icon-128x128.png $FLATPAK_DEST/share/icons/hicolor/128x128/apps/org.linux_hardware.hw-probe.png
+      - install -D flatpak/icon-64x64.png $FLATPAK_DEST/share/icons/hicolor/64x64/apps/org.linux_hardware.hw-probe.png
+      - install -D flatpak/hw-probe.desktop $FLATPAK_DEST/share/applications/org.linux_hardware.hw-probe.desktop
+      - install -D flatpak/usb.ids $FLATPAK_DEST/share/usb.ids
+      - install -D flatpak/pci.ids $FLATPAK_DEST/share/pci.ids
+    sources:
+      - type: archive
+        url: https://github.com/linuxhw/build-stuff/releases/download/1.6/hw-probe-1.6-AI.tar.gz
+        sha256: c13151da522d594b9ed53805c665a96c62678e132b6ffa37c7da264090c9d10f
+  - name: hwdata
+    buildsystem: autotools
+    config-opts:
+      - --prefix=$FLATPAK_DEST
+      - --disable-blacklist
+    sources:
+      - type: archive
+        url: https://github.com/vcrhonek/hwdata/archive/refs/tags/v0.410.tar.gz
+        sha256: 2864b061b179b8ad8cb6a7339ca07678240a183d9cedce8677a4950acaf798e0
+  - name: hw-probe-pyqt6-gui
+    buildsystem: simple
+    build-commands:
+      - mkdir -p $FLATPAK_DEST/share/hw-probe-pyqt6-gui/
+      - mv Resources Hardware\ Probe $FLATPAK_DEST/share/hw-probe-pyqt6-gui/
+      - ln -s $FLATPAK_DEST/share/hw-probe-pyqt6-gui/Hardware\ Probe $FLATPAK_DEST/bin/hw-probe-pyqt6-gui
+      - chmod 777 $FLATPAK_DEST/bin/hw-probe-pyqt6-gui
+    sources:
+      - type: archive
+        url: https://github.com/linuxhw/build-stuff/releases/download/1.6/hw-probe-pyqt6-gui-1.0-AI.tar.gz
+        sha256: 3a0a09d486a3b813397689e7de2df84b3132e7dab3d6dcda76cc19298b082c9c
   - name: perl-uri
     buildsystem: simple
     build-commands:
@@ -360,184 +550,6 @@ modules:
       - type: archive
         url: https://www.cpan.org/modules/by-module/Data/Data-Dumper-2.183.tar.gz
         sha256: e42736890b7dae1b37818d9c5efa1f1fdc52dec04f446a33a4819bf1d4ab5ad3
-  - name: python3-setuptools
-    buildsystem: simple
-    build-commands:
-        - pip3 install --no-deps .
-    sources:
-        - type: archive
-          url: https://files.pythonhosted.org/packages/6d/44/f5da03a8ef95d369145c5bb53050e7877c9f3d312e128605fd9504829143/setuptools-84.0.0.tar.gz
-          sha256: f4695c21257f0d9b537ec2692c941d02ee143b7cc1276941349a546573b2ef73
-  - name: python3-flit_core
-    buildsystem: simple
-    build-commands:
-        - pip3 install --no-deps --prefix=$FLATPAK_DEST .
-    sources:
-        - type: archive
-          url: https://files.pythonhosted.org/packages/46/ef/34533186e76c526d9ec17a1ad9a10c7354cbfb20f51583cc36dfe4bdccd0/flit_core-4.0.2.tar.gz
-          sha256: b6929defd93884b584d7c87829e0e7b5c26ed6be17b0b873979019314aa841c8
-  - name: PyQt6
-    buildsystem: simple
-    build-commands:
-      - |
-        PYTHON_VERSION=$(python3 -c 'import sys; print("{}.{}".format(*sys.version_info))')
-        sip-install \
-            --confirm-license \
-            --no-designer-plugin \
-            --no-qml-plugin \
-            --no-tools \
-            --concatenate=1 \
-            --no-docstrings \
-            --verbose \
-            --qt-shared \
-            --target-dir="${FLATPAK_DEST}/lib/python${PYTHON_VERSION}/site-packages" \
-            --enable=QtCore \
-            --enable=QtGui \
-            --enable=QtWidgets
-    sources:
-      - type: archive
-        url: https://files.pythonhosted.org/packages/8b/47/b25c13eca5bebc6505394d0223e46d7ebf0c57dcac2ed908d7d19b18ab6b/pyqt6-6.11.0.tar.gz
-        sha256: 45dd60aa69976de1918b5ced6b4e7b6a25abd2a919ecef5fd5826ecc76718889
-    modules:
-      - name: python3-sip
-        buildsystem: simple
-        build-commands:
-          - pip3 install --no-deps --prefix=$FLATPAK_DEST --no-build-isolation .
-        sources:
-          - type: archive
-            url: https://files.pythonhosted.org/packages/35/cb/4b1c18c22e291bb08dfc028bd1577dc7e8818e83a0338557a4de1f203d65/sip-6.16.0.tar.gz
-            sha256: 22dcb9d02347a3af22a2cba41730c9467f1f781362e97c5eea4ec75c4b7e4ffe
-        modules:
-          - name: python3-toml
-            buildsystem: simple
-            build-commands:
-                - pip3 install --no-deps --prefix=$FLATPAK_DEST --no-build-isolation .
-            sources:
-                - type: archive
-                  url: https://files.pythonhosted.org/packages/be/ba/1f744cdc819428fc6b5084ec34d9b30660f6f9daaf70eead706e3203ec3c/toml-0.10.2.tar.gz
-                  sha256: b3bda1d108d5dd99f4a20d24d9c348e91c4db7ab1b749200bded2f839ccbe68f
-          - name: python3-packaging
-            buildsystem: simple
-            build-commands:
-                - pip3 install --no-deps --no-build-isolation .
-            sources:
-                - type: archive
-                  url: https://files.pythonhosted.org/packages/7d/fa/3944b40b07da9ce895c0e6303a5ab7d53da063554f534556b134a54d6093/packaging-26.3.tar.gz
-                  sha256: 94edc256424af38762eb31306eed28beb9f0efc50a8837492c9d6fd6004aed79
-            cleanup:
-                - "*"
-      - name: pyqt6_sip
-        buildsystem: simple
-        build-commands:
-          - pip3 install --no-deps --prefix=$FLATPAK_DEST --no-build-isolation .
-        sources:
-          - type: archive
-            url: https://files.pythonhosted.org/packages/d1/23/16c583dbb6b53e0494dfcf7d1a44778c82e324edda62326727b37f1a5b34/pyqt6_sip-13.12.0.tar.gz
-            sha256: a7ad45c1e3cec3a2473d37ea9870b6c3baeccc560298623c8eb59265714c06e2
-      - name: python3-pyparsing
-        buildsystem: simple
-        build-commands:
-          - pip3 install --no-deps --prefix=$FLATPAK_DEST --no-build-isolation .
-        sources:
-          - type: archive
-            url: https://files.pythonhosted.org/packages/f3/91/9c6ee907786a473bf81c5f53cf703ba0957b23ab84c264080fb5a450416f/pyparsing-3.3.2.tar.gz
-            sha256: c777f4d763f140633dcb6d8a3eda953bf7a214dc4eff598413c070bcdc117cbc
-        cleanup:
-          - "*"
-      - name: pyqt_builder
-        buildsystem: simple
-        build-commands:
-          - pip3 install --no-deps --prefix=$FLATPAK_DEST --no-build-isolation .
-        sources:
-          - type: archive
-            url: https://files.pythonhosted.org/packages/61/f6/f3b504b4d55a7c4d3393cb90378501f1f5fc7f233bd85c0375674f84d2af/pyqt_builder-1.19.1.tar.gz
-            sha256: 6af6646ba29668751b039bfdced51642cb510e300796b58a4d68b7f956a024d8
-        cleanup:
-        - "*"
-  - name: libx86emu
-    buildsystem: simple
-    build-commands:
-      - echo '3.7' > VERSION
-      - rm -f git2log
-      - sed -i -e 's/ -g / -s /' Makefile
-      - make -j $FLATPAK_BUILDER_N_JOBS
-      - find . -type f | perl -lne 'print if -B and -x' | xargs strip
-      - make install DESTDIR=`pwd`/INST
-      - cp -fr INST/usr/* $FLATPAK_DEST/
-    sources:
-      - type: archive
-        url: https://github.com/wfeldt/libx86emu/archive/refs/tags/3.7.tar.gz
-        sha256: 03754aede79530baa0e862e1aad5527e9c1bd3371736b1ab5a2bc769e4a3d680
-  - name: hwinfo
-    skip-arches:
-      - aarch64
-      - arm
-    buildsystem: simple
-    build-commands:
-      - echo '23.2' > VERSION
-      - rm -f git2log
-      - sed -i -e 's/ -g / -s /' Makefile.common
-      - CFLAGS='-I'$FLATPAK_DEST'/include' LDFLAGS='-L'$FLATPAK_DEST'/lib64 -L'$FLATPAK_DEST'/lib -lx86emu' LD_LIBRARY_PATH=$FLATPAK_DEST'/lib64:'$FLATPAK_DEST'/lib' make
-      - make install DESTDIR=`pwd`/INST
-      - cp -fr INST/usr/* $FLATPAK_DEST/
-    sources:
-      - type: archive
-        url: https://github.com/openSUSE/hwinfo/archive/23.2.tar.gz
-        sha256: 1ffc00d07aa1ad766e861d0d8492e2d2fa52cf537807f34e1c80e8c2d56c7115
-  - name: hwinfo
-    only-arches:
-      - aarch64
-      - arm
-    buildsystem: simple
-    build-commands:
-      - echo '22.1' > VERSION
-      - rm -f git2log
-      - sed -i -e 's/ -g / -s /' Makefile.common
-      - make
-      - make install DESTDIR=`pwd`/INST
-      - cp -fr INST/usr/* $FLATPAK_DEST/
-    sources:
-      - type: archive
-        url: https://github.com/openSUSE/hwinfo/archive/23.2.tar.gz
-        sha256: 1ffc00d07aa1ad766e861d0d8492e2d2fa52cf537807f34e1c80e8c2d56c7115
-  - name: hw-probe
-    buildsystem: simple
-    build-commands:
-      - make install DESTDIR=$FLATPAK_DEST prefix=/
-      - mv $FLATPAK_DEST/bin/hw-probe $FLATPAK_DEST/bin/hw-probe-flatpak
-      - install -m 777 -D flatpak/hw-probe.sh $FLATPAK_DEST/bin/hw-probe
-      - install -D flatpak/PERL5_BASE $FLATPAK_DEST/share/PERL5_BASE
-      - install -D flatpak/hw-probe.appdata.xml $FLATPAK_DEST/share/metainfo/org.linux_hardware.hw-probe.metainfo.xml
-      - install -D flatpak/icon-256x256.png $FLATPAK_DEST/share/icons/hicolor/256x256/apps/org.linux_hardware.hw-probe.png
-      - install -D flatpak/icon-128x128.png $FLATPAK_DEST/share/icons/hicolor/128x128/apps/org.linux_hardware.hw-probe.png
-      - install -D flatpak/icon-64x64.png $FLATPAK_DEST/share/icons/hicolor/64x64/apps/org.linux_hardware.hw-probe.png
-      - install -D flatpak/hw-probe.desktop $FLATPAK_DEST/share/applications/org.linux_hardware.hw-probe.desktop
-      - install -D flatpak/usb.ids $FLATPAK_DEST/share/usb.ids
-      - install -D flatpak/pci.ids $FLATPAK_DEST/share/pci.ids
-    sources:
-      - type: archive
-        url: https://github.com/linuxhw/build-stuff/releases/download/1.6/hw-probe-1.6-AI.tar.gz
-        sha256: 366ee795d62bd6d2e348f2a08c6eadfc29c335c1f82814fca9dc1c56056c69fb
-  - name: hwdata
-    buildsystem: autotools
-    config-opts:
-      - --prefix=$FLATPAK_DEST
-      - --disable-blacklist
-    sources:
-      - type: archive
-        url: https://github.com/vcrhonek/hwdata/archive/refs/tags/v0.410.tar.gz
-        sha256: 2864b061b179b8ad8cb6a7339ca07678240a183d9cedce8677a4950acaf798e0
-  - name: hw-probe-pyqt6-gui
-    buildsystem: simple
-    build-commands:
-      - mkdir -p $FLATPAK_DEST/share/hw-probe-pyqt6-gui/
-      - mv Resources Hardware\ Probe $FLATPAK_DEST/share/hw-probe-pyqt6-gui/
-      - ln -s $FLATPAK_DEST/share/hw-probe-pyqt6-gui/Hardware\ Probe $FLATPAK_DEST/bin/hw-probe-pyqt6-gui
-      - chmod 777 $FLATPAK_DEST/bin/hw-probe-pyqt6-gui
-    sources:
-      - type: archive
-        url: https://github.com/linuxhw/build-stuff/releases/download/1.6/hw-probe-pyqt6-gui-1.0-AI.tar.gz
-        sha256: 3a0a09d486a3b813397689e7de2df84b3132e7dab3d6dcda76cc19298b082c9c
   - name: perl-base
     buildsystem: simple
     build-commands:
