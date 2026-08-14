@@ -462,7 +462,7 @@ modules:
       - sed -i -e 's/ -g / -s /' Makefile
       - make -j $FLATPAK_BUILDER_N_JOBS
       - find . -type f | perl -lne 'print if -B and -x' | xargs strip
-      - make install DESTDIR=`pwd`/INST
+      - make install DESTDIR=`pwd`/INST LIBDIR=/usr/lib
       - cp -fr INST/usr/* $FLATPAK_DEST/
     sources:
       - type: archive
